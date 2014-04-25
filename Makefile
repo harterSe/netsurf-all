@@ -38,7 +38,7 @@ $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/lib
 	mkdir -p $(TMP_PREFIX)/bin
 	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
-	$(MAKE) --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) 
+	$(MAKE) install --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) 
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET)
 	touch $@
 
