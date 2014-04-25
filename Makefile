@@ -10,19 +10,17 @@ NETSURF_TARG := netsurf
 
 NSLIBTARG :=  buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsfb libsvgtiny nsgenbind
 
-
+# clean macro for each sub target
 define do_clean
 	$(MAKE) distclean --directory=$1 TARGET=$(TARGET)
-
 endef
 
+# prefixed install macro for each sub target
 define do_prefix_install
 	$(MAKE) install --directory=$1 TARGET=$(TARGET) PREFIX=$(TMP_PREFIX) DESTDIR=
-
 endef
 
-
-.PHONY: build install clean
+.PHONY: build install clean release-checkout
 
 build: $(TMP_PREFIX)/build-stamp
 
@@ -40,3 +38,6 @@ clean:
 	$(RM) -r $(TMP_PREFIX)
 	$(foreach L,$(NSLIBTARG),$(call do_clean,$(L)))
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
+
+release-checkout: $(NSLIBTARG) $(NETSURF_TARG)
+	for x in $^; do cd $$x; (git checkout origin/HEAD && git checkout $$(git describe --abbrev=0 --match="release/*" )); cd ..; done
