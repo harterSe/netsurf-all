@@ -38,7 +38,7 @@ $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/lib
 	mkdir -p $(TMP_PREFIX)/bin
 	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
-	$(MAKE) install --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) 
+	$(MAKE) install --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) TARGET=$(shell uname -s)
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET)
 	touch $@
 
@@ -48,6 +48,7 @@ install: $(TMP_PREFIX)/build-stamp
 clean:
 	$(RM) -r $(TMP_PREFIX)
 	$(foreach L,$(NSLIB_TARG),$(call do_clean,$(L)))
+	$(MAKE) clean --directory=$(NSGENBIND_TARG) TARGET=$(TARGET)
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
 release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG)
