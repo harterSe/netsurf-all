@@ -14,7 +14,10 @@ TMP_PREFIX := $(CURDIR)/inst-$(TARGET)
 
 NETSURF_TARG := netsurf
 
-NSLIBTARG :=  buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsfb libsvgtiny nsgenbind
+# nsgenbind host tool
+NSGENBIND_TARG := nsgenbind
+
+NSLIB_TARG :=  buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsfb libsvgtiny
 
 # clean macro for each sub target
 define do_clean
@@ -33,7 +36,9 @@ build: $(TMP_PREFIX)/build-stamp
 $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/include
 	mkdir -p $(TMP_PREFIX)/lib
-	$(foreach L,$(NSLIBTARG),$(call do_prefix_install,$(L)))
+	mkdir -p $(TMP_PREFIX)/bin
+	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
+	$(MAKE) --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) 
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET)
 	touch $@
 
@@ -42,10 +47,10 @@ install: $(TMP_PREFIX)/build-stamp
 
 clean:
 	$(RM) -r $(TMP_PREFIX)
-	$(foreach L,$(NSLIBTARG),$(call do_clean,$(L)))
+	$(foreach L,$(NSLIB_TARG),$(call do_clean,$(L)))
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
-release-checkout: $(NSLIBTARG) $(NETSURF_TARG)
+release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG)
 	for x in $^; do cd $$x; (git checkout origin/HEAD && git checkout $$(git describe --abbrev=0 --match="release/*" )); cd ..; done
 
 dist:
