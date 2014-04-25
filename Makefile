@@ -47,6 +47,9 @@ endif
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET)
 	touch $@
 
+package: $(TMP_PREFIX)/build-stamp
+	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET) package
+
 install: $(TMP_PREFIX)/build-stamp
 	$(MAKE) install --directory=$(NETSURF_TARG) TARGET=$(TARGET) PREFIX=$(PREFIX) DESTDIR=$(DESTDIR)
 
