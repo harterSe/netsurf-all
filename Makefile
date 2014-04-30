@@ -17,9 +17,22 @@ NETSURF_TARG := netsurf
 # nsgenbind host tool
 NSGENBIND_TARG := nsgenbind
 
-NSLIB_TARG :=  buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsfb libsvgtiny
+NSLIB_ALL_TARG :=  buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libsvgtiny
+
+NSLIB_FB_TARG := libnsfb
 
 NSLIB_RO_TARG := librufl libpencil
+
+# only build what we reuire for the target
+ifeq ($(TARGET),riscos)
+  NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_RO_TARG)
+else
+  ifeq ($(TARGET),framebuffer)
+    NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_FB_TARG)
+  else
+    NSLIB_TARG := $(NSLIB_ALL_TARG)
+  endif
+endif
 
 # clean macro for each sub target
 define do_clean
@@ -40,9 +53,6 @@ $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/lib
 	mkdir -p $(TMP_PREFIX)/bin
 	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
-ifeq ($(TARGET),riscos)
-	$(foreach L,$(NSLIB_RO_TARG),$(call do_prefix_install,$(L)))
-endif
 	$(MAKE) install --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) TARGET=$(shell uname -s)
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET)
 	touch $@
@@ -56,9 +66,6 @@ install: $(TMP_PREFIX)/build-stamp
 clean:
 	$(RM) -r $(TMP_PREFIX)
 	$(foreach L,$(NSLIB_TARG),$(call do_clean,$(L)))
-ifeq ($(TARGET),riscos)
-	$(foreach L,$(NSLIB_RO_TARG),$(call do_clean,$(L)))
-endif
 	$(MAKE) clean --directory=$(NSGENBIND_TARG) TARGET=$(TARGET)
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
