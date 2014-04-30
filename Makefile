@@ -63,10 +63,10 @@ $(TMP_PREFIX)/build-stamp:
 	touch $@
 
 package: $(TMP_PREFIX)/build-stamp
-	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET) package
+	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET) package $(NETSURF_CONFIG)
 
 install: $(TMP_PREFIX)/build-stamp
-	$(MAKE) install --directory=$(NETSURF_TARG) TARGET=$(TARGET) PREFIX=$(PREFIX) DESTDIR=$(DESTDIR)
+	$(MAKE) install --directory=$(NETSURF_TARG) TARGET=$(TARGET) PREFIX=$(PREFIX) DESTDIR=$(DESTDIR) $(NETSURF_CONFIG)
 
 clean:
 	$(RM) -r $(TMP_PREFIX)
