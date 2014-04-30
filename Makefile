@@ -23,14 +23,19 @@ NSLIB_FB_TARG := libnsfb
 
 NSLIB_RO_TARG := librufl libpencil
 
-# only build what we reuire for the target
+# only build what we require for the target
 ifeq ($(TARGET),riscos)
   NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_RO_TARG)
 else
   ifeq ($(TARGET),framebuffer)
     NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_FB_TARG)
   else
-    NSLIB_TARG := $(NSLIB_ALL_TARG)
+    ifeq ($(TARGET),amiga)
+      NSLIB_TARG := $(NSLIB_ALL_TARG)
+	NETSURF_CONFIG := NETSURF_USE_MOZJS=YES
+    else
+      NSLIB_TARG := $(NSLIB_ALL_TARG)
+    endif
   endif
 endif
 
@@ -54,7 +59,7 @@ $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/bin
 	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
 	$(MAKE) install --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) TARGET=$(shell uname -s)
-	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET)
+	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET) $(NETSURF_CONFIG)
 	touch $@
 
 package: $(TMP_PREFIX)/build-stamp
