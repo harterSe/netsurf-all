@@ -15,7 +15,9 @@ NETSURF_TARG := netsurf
 NSGENBIND_TARG := nsgenbind
 
 # Library targets
-NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libsvgtiny
+NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite
+
+NSLIB_SVGTINY_TARG := libsvgtiny
 
 NSLIB_FB_TARG := libnsfb
 
@@ -30,24 +32,29 @@ HOST := $(shell uname -s)
 
 # only build what we require for the target
 ifeq ($(TARGET),riscos)
-  NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_RO_TARG)
+  NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
   NSHOST_TARG := $(NSGENBIND_TARG)
 else
   ifeq ($(TARGET),framebuffer)
-    NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_FB_TARG)
+    NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG)  $(NSLIB_FB_TARG)
     NSHOST_TARG := $(NSGENBIND_TARG)
   else
     ifeq ($(TARGET),amiga)
-      NSLIB_TARG := $(NSLIB_ALL_TARG)
+      NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG)
       NSHOST_TARG := $(NSGENBIND_TARG)
       NETSURF_CONFIG := NETSURF_USE_MOZJS=YES
     else
       ifeq ($(TARGET),cocoa)
-        NSLIB_TARG := $(NSLIB_ALL_TARG)
+        NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG) 
 	export CFLAGS := -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -Wno-error
       else
-        NSLIB_TARG := $(NSLIB_ALL_TARG)
-        NSHOST_TARG := $(NSGENBIND_TARG)
+        ifeq ($(TARGET),atari)
+          NSLIB_TARG := $(NSLIB_ALL_TARG)
+          NSHOST_TARG := $(NSGENBIND_TARG)
+        else
+          NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG) 
+          NSHOST_TARG := $(NSGENBIND_TARG)
+        endif
       endif
     endif
   endif
