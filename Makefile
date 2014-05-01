@@ -6,38 +6,53 @@
 COMPONENT := netsurf-all
 COMPONENT_VERSION := 3.1
 
-.PHONY: build install clean release-checkout dist
+# Targets
 
-export TARGET ?= gtk
-export PKG_CONFIG_PATH = $(TMP_PREFIX)/lib/pkgconfig
-TMP_PREFIX := $(CURDIR)/inst-$(TARGET)
-
+# Netsurf target
 NETSURF_TARG := netsurf
 
 # nsgenbind host tool
 NSGENBIND_TARG := nsgenbind
 
-NSLIB_ALL_TARG :=  buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libsvgtiny
+# Library targets
+NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libsvgtiny
 
 NSLIB_FB_TARG := libnsfb
 
 NSLIB_RO_TARG := librufl libpencil
 
+
+# Build Environment
+export TARGET ?= gtk
+export PKG_CONFIG_PATH = $(TMP_PREFIX)/lib/pkgconfig
+TMP_PREFIX := $(CURDIR)/inst-$(TARGET)
+HOST := $(shell uname -s)
+
 # only build what we require for the target
 ifeq ($(TARGET),riscos)
   NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_RO_TARG)
+  NSHOST_TARG := $(NSGENBIND_TARG)
 else
   ifeq ($(TARGET),framebuffer)
     NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_FB_TARG)
+    NSHOST_TARG := $(NSGENBIND_TARG)
   else
     ifeq ($(TARGET),amiga)
       NSLIB_TARG := $(NSLIB_ALL_TARG)
-	NETSURF_CONFIG := NETSURF_USE_MOZJS=YES
+      NSHOST_TARG := $(NSGENBIND_TARG)
+      NETSURF_CONFIG := NETSURF_USE_MOZJS=YES
     else
-      NSLIB_TARG := $(NSLIB_ALL_TARG)
+      ifeq ($(TARGET),cocoa)
+        NSLIB_TARG := $(NSLIB_ALL_TARG)
+      else
+        NSLIB_TARG := $(NSLIB_ALL_TARG)
+        NSHOST_TARG := $(NSGENBIND_TARG)
+      endif
     endif
   endif
 endif
+
+.PHONY: build install clean release-checkout dist
 
 # clean macro for each sub target
 define do_clean
@@ -45,9 +60,21 @@ define do_clean
 
 endef
 
+# clean macro for each host sub target
+define do_host_clean
+	$(MAKE) distclean --directory=$1 TARGET=$(HOST)
+
+endef
+
 # prefixed install macro for each sub target
 define do_prefix_install
 	$(MAKE) install --directory=$1 TARGET=$(TARGET) PREFIX=$(TMP_PREFIX) DESTDIR=
+
+endef
+
+# prefixed install macro for each host sub target
+define do_host_prefix_install
+	$(MAKE) install --directory=$1 TARGET=$(HOST) PREFIX=$(TMP_PREFIX) DESTDIR=
 
 endef
 
@@ -58,7 +85,7 @@ $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/lib
 	mkdir -p $(TMP_PREFIX)/bin
 	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
-	$(MAKE) install --directory=$(NSGENBIND_TARG) PREFIX=$(TMP_PREFIX) TARGET=$(shell uname -s)
+	$(foreach L,$(NSHOST_TARG),$(call do_prefix_install,$(L)))
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET) $(NETSURF_CONFIG)
 	touch $@
 
@@ -71,7 +98,7 @@ install: $(TMP_PREFIX)/build-stamp
 clean:
 	$(RM) -r $(TMP_PREFIX)
 	$(foreach L,$(NSLIB_TARG),$(call do_clean,$(L)))
-	$(MAKE) clean --directory=$(NSGENBIND_TARG) TARGET=$(TARGET)
+	$(foreach L,$(NSHOST_TARG),$(call do_host_clean,$(L)))
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
 release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_RO_TARG)
