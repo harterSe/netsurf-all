@@ -44,7 +44,7 @@ else
     else
       ifeq ($(TARGET),cocoa)
         NSLIB_TARG := $(NSLIB_ALL_TARG)
-	export CFLAGS := -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5
+	export CFLAGS := -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -Wno-error
       else
         NSLIB_TARG := $(NSLIB_ALL_TARG)
         NSHOST_TARG := $(NSGENBIND_TARG)
