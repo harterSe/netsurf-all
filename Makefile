@@ -4,7 +4,7 @@
 
 # Component settings
 COMPONENT := netsurf-all
-COMPONENT_VERSION := 3.1
+COMPONENT_VERSION := 3.2
 
 # Targets
 
@@ -26,9 +26,12 @@ NSLIB_RO_TARG := librufl libpencil
 
 # Build Environment
 export TARGET ?= gtk
-export PKG_CONFIG_PATH = $(TMP_PREFIX)/lib/pkgconfig
 TMP_PREFIX := $(CURDIR)/inst-$(TARGET)
+export PKG_CONFIG_PATH = $(TMP_PREFIX)/lib/pkgconfig
+export PATH := $(PATH):$(TMP_PREFIX)/bin/
 HOST := $(shell uname -s)
+TMP_NSSHARED := $(CURDIR)/buildsystem
+
 
 # only build what we require for the target
 ifeq ($(TARGET),riscos)
@@ -60,17 +63,17 @@ else
   endif
 endif
 
-.PHONY: build install clean release-checkout dist
+.PHONY: build install clean release-checkout head-checkout dist
 
 # clean macro for each sub target
 define do_clean
-	$(MAKE) distclean --directory=$1 TARGET=$(TARGET)
+	$(MAKE) distclean --directory=$1 TARGET=$(TARGET) NSSHARED=$(TMP_NSSHARED)
 
 endef
 
 # clean macro for each host sub target
 define do_host_clean
-	$(MAKE) distclean --directory=$1 TARGET=$(HOST)
+	$(MAKE) distclean --directory=$1 TARGET=$(HOST) NSSHARED=$(TMP_NSSHARED)
 
 endef
 
@@ -110,7 +113,12 @@ clean:
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
 release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_RO_TARG)
+	git pull --recurse-submodules
 	for x in $^; do cd $$x; (git checkout origin/HEAD && git checkout $$(git describe --abbrev=0 --match="release/*" )); cd ..; done
+
+head-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_RO_TARG)
+	git pull --recurse-submodules
+	for x in $^; do cd $$x; git checkout origin/HEAD ; cd ..; done
 
 dist:
 	$(eval GIT_TAG := $(shell git describe --abbrev=0 --match "release/*"))
