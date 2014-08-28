@@ -112,11 +112,11 @@ clean:
 	$(foreach L,$(NSHOST_TARG),$(call do_host_clean,$(L)))
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
-release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_RO_TARG)
+release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
 	git pull --recurse-submodules
 	for x in $^; do cd $$x; (git checkout origin/HEAD && git checkout $$(git describe --abbrev=0 --match="release/*" )); cd ..; done
 
-head-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_RO_TARG)
+head-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
 	git pull --recurse-submodules
 	for x in $^; do cd $$x; git checkout origin/HEAD ; cd ..; done
 
