@@ -96,7 +96,7 @@ $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/lib
 	mkdir -p $(TMP_PREFIX)/bin
 	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
-	$(foreach L,$(NSHOST_TARG),$(call do_prefix_install,$(L)))
+	$(foreach L,$(NSHOST_TARG),$(call do_host_prefix_install,$(L)))
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET) $(NETSURF_CONFIG)
 	touch $@
 
