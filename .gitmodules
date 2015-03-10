@@ -43,3 +43,9 @@
 [submodule "nsgenbind"]
 	path = nsgenbind
 	url = git://git.netsurf-browser.org/nsgenbind.git
+[submodule "libnsutils"]
+	path = libnsutils
+	url = http://git.netsurf-browser.org/libnsutils.git/
+[submodule "libutf8proc"]
+	path = libutf8proc
+	url = http://git.netsurf-browser.org/libutf8proc.git/
