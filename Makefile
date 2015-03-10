@@ -1,10 +1,23 @@
 #!/bin/make
 #
 # NetSurf Source makefile for libraries and browser
+#
+# The TARGET variable changes what toolkit is built for valid values are:
+#  gtk (default if unset)
+#  riscos
+#  framebuffer
+#  amiga
+#  cocoa
+#  atari
+#
+# The HOST variable controls the targetted ABI and not all toolkits build with
+#  all ABI e.g TARGET=riscos must be paired with HOST=arm-unknown-riscos 
+# The default is to use the BUILD variable contents which in turn defaults to
+#  the current cc default ABI target
 
 # Component settings
 COMPONENT := netsurf-all
-COMPONENT_VERSION := 3.2
+COMPONENT_VERSION := 3.3
 
 # Targets
 
@@ -15,7 +28,7 @@ NETSURF_TARG := netsurf
 NSGENBIND_TARG := nsgenbind
 
 # Library targets
-NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite
+NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsutils libutf8proc
 
 NSLIB_SVGTINY_TARG := libsvgtiny
 
@@ -29,22 +42,25 @@ export TARGET ?= gtk
 TMP_PREFIX := $(CURDIR)/inst-$(TARGET)
 export PKG_CONFIG_PATH = $(TMP_PREFIX)/lib/pkgconfig
 export PATH := $(PATH):$(TMP_PREFIX)/bin/
-HOST := $(shell uname -s)
 TMP_NSSHARED := $(CURDIR)/buildsystem
 
+# The system actually doing the build
+BUILD ?= $(shell cc -dumpmachine)
+# The host we are targetting
+HOST ?= $(BUILD)
 
 # only build what we require for the target
 ifeq ($(TARGET),riscos)
   NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
-  NSHOST_TARG := $(NSGENBIND_TARG)
+  NSBUILD_TARG := $(NSGENBIND_TARG)
 else
   ifeq ($(TARGET),framebuffer)
     NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG)  $(NSLIB_FB_TARG)
-    NSHOST_TARG := $(NSGENBIND_TARG)
+    NSBUILD_TARG := $(NSGENBIND_TARG)
   else
     ifeq ($(TARGET),amiga)
       NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG)
-      NSHOST_TARG := $(NSGENBIND_TARG)
+      NSBUILD_TARG := $(NSGENBIND_TARG)
       NETSURF_CONFIG := NETSURF_USE_MOZJS=YES
     else
       ifeq ($(TARGET),cocoa)
@@ -53,10 +69,10 @@ else
       else
         ifeq ($(TARGET),atari)
           NSLIB_TARG := $(NSLIB_ALL_TARG)
-          NSHOST_TARG := $(NSGENBIND_TARG)
+          NSBUILD_TARG := $(NSGENBIND_TARG)
         else
           NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG) 
-          NSHOST_TARG := $(NSGENBIND_TARG)
+          NSBUILD_TARG := $(NSGENBIND_TARG)
         endif
       endif
     endif
@@ -67,25 +83,25 @@ endif
 
 # clean macro for each sub target
 define do_clean
-	$(MAKE) distclean --directory=$1 TARGET=$(TARGET) NSSHARED=$(TMP_NSSHARED)
+	$(MAKE) distclean --directory=$1 HOST=$(HOST) NSSHARED=$(TMP_NSSHARED)
 
 endef
 
 # clean macro for each host sub target
-define do_host_clean
-	$(MAKE) distclean --directory=$1 TARGET=$(HOST) NSSHARED=$(TMP_NSSHARED)
+define do_build_clean
+	$(MAKE) distclean --directory=$1 HOST=$(HOST) NSSHARED=$(TMP_NSSHARED)
 
 endef
 
 # prefixed install macro for each sub target
 define do_prefix_install
-	$(MAKE) install --directory=$1 TARGET=$(TARGET) PREFIX=$(TMP_PREFIX) DESTDIR=
+	$(MAKE) install --directory=$1 HOST=$(HOST) PREFIX=$(TMP_PREFIX) DESTDIR=
 
 endef
 
 # prefixed install macro for each host sub target
-define do_host_prefix_install
-	$(MAKE) install --directory=$1 TARGET=$(HOST) PREFIX=$(TMP_PREFIX) DESTDIR=
+define do_build_prefix_install
+	$(MAKE) install --directory=$1 HOST=$(BUILD) PREFIX=$(TMP_PREFIX) DESTDIR=
 
 endef
 
@@ -96,7 +112,7 @@ $(TMP_PREFIX)/build-stamp:
 	mkdir -p $(TMP_PREFIX)/lib
 	mkdir -p $(TMP_PREFIX)/bin
 	$(foreach L,$(NSLIB_TARG),$(call do_prefix_install,$(L)))
-	$(foreach L,$(NSHOST_TARG),$(call do_host_prefix_install,$(L)))
+	$(foreach L,$(NSBUILD_TARG),$(call do_build_prefix_install,$(L)))
 	$(MAKE) --directory=$(NETSURF_TARG) PREFIX=$(PREFIX) TARGET=$(TARGET) $(NETSURF_CONFIG)
 	touch $@
 
@@ -109,7 +125,7 @@ install: $(TMP_PREFIX)/build-stamp
 clean:
 	$(RM) -r $(TMP_PREFIX)
 	$(foreach L,$(NSLIB_TARG),$(call do_clean,$(L)))
-	$(foreach L,$(NSHOST_TARG),$(call do_host_clean,$(L)))
+	$(foreach L,$(NSBUILD_TARG),$(call do_build_clean,$(L)))
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
 release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
