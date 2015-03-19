@@ -49,6 +49,15 @@ BUILD ?= $(shell cc -dumpmachine)
 # The host we are targetting
 HOST ?= $(BUILD)
 
+# build verbosity. 
+# NetSurf uses the kernel style quiet Q variable but we also need to cope with thr GNU V=1 style
+ifeq ($(V),1)
+  Q:=
+else
+  Q=@
+endif
+
+
 # only build what we require for the target
 ifeq ($(TARGET),riscos)
   NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
@@ -83,25 +92,25 @@ endif
 
 # clean macro for each sub target
 define do_clean
-	$(MAKE) distclean --directory=$1 HOST=$(HOST) NSSHARED=$(TMP_NSSHARED)
+	$(MAKE) distclean --directory=$1 HOST=$(HOST) NSSHARED=$(TMP_NSSHARED) Q=$(Q)
 
 endef
 
 # clean macro for each host sub target
 define do_build_clean
-	$(MAKE) distclean --directory=$1 HOST=$(HOST) NSSHARED=$(TMP_NSSHARED)
+	$(MAKE) distclean --directory=$1 HOST=$(HOST) NSSHARED=$(TMP_NSSHARED) Q=$(Q)
 
 endef
 
 # prefixed install macro for each sub target
 define do_prefix_install
-	$(MAKE) install --directory=$1 HOST=$(HOST) PREFIX=$(TMP_PREFIX) DESTDIR=
+	$(MAKE) install --directory=$1 HOST=$(HOST) PREFIX=$(TMP_PREFIX) Q=$(Q) DESTDIR=
 
 endef
 
 # prefixed install macro for each host sub target
 define do_build_prefix_install
-	$(MAKE) install --directory=$1 HOST=$(BUILD) PREFIX=$(TMP_PREFIX) DESTDIR=
+	$(MAKE) install --directory=$1 HOST=$(BUILD) PREFIX=$(TMP_PREFIX) Q=$(Q) DESTDIR=
 
 endef
 
