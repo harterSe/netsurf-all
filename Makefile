@@ -17,7 +17,7 @@
 
 # Component settings
 COMPONENT := netsurf-all
-COMPONENT_VERSION := 3.3
+COMPONENT_VERSION := 3.4
 
 # Targets
 
@@ -88,7 +88,7 @@ else
   endif
 endif
 
-.PHONY: build install clean release-checkout head-checkout dist
+.PHONY: build install clean checkout-release checkout-head dist dist-head
 
 # clean macro for each sub target
 define do_clean
@@ -137,13 +137,22 @@ clean:
 	$(foreach L,$(NSBUILD_TARG),$(call do_build_clean,$(L)))
 	$(MAKE) clean --directory=$(NETSURF_TARG) TARGET=$(TARGET)
 
-release-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
+# check out last release tag on each submodule
+checkout-release: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
 	git pull --recurse-submodules
 	for x in $^; do cd $$x; (git checkout origin/HEAD && git checkout $$(git describe --abbrev=0 --match="release/*" )); cd ..; done
 
-head-checkout: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
+# check out head on each submodule
+checkout-head: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
+	git submodule init
 	git pull --recurse-submodules
 	for x in $^; do cd $$x; git checkout origin/HEAD ; cd ..; done
+
+# Generate a dist tarball from the head of all submodules
+dist-head: checkout-head
+	$(eval DIST_FILE := $(COMPONENT)-${COMPONENT_VERSION}~$$$${BUILD_NUMBER:-1})
+	$(Q)git-archive-all --prefix=$(DIST_FILE)/ $(DIST_FILE).tgz
+	$(Q)mv $(DIST_FILE).tgz $(DIST_FILE).tar.gz
 
 dist:
 	$(eval GIT_TAG := $(shell git describe --abbrev=0 --match "release/*"))
