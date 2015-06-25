@@ -145,6 +145,7 @@ checkout-release: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TAR
 # check out head on each submodule
 checkout-head: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
 	git submodule init
+	git submodule update
 	git pull --recurse-submodules
 	for x in $^; do cd $$x; git checkout origin/HEAD ; cd ..; done
 
