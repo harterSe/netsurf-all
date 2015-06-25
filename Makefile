@@ -139,14 +139,14 @@ clean:
 
 # check out last release tag on each submodule
 checkout-release: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
-	git pull --recurse-submodules
+	git fetch --recurse-submodules
 	for x in $^; do cd $$x; (git checkout origin/HEAD && git checkout $$(git describe --abbrev=0 --match="release/*" )); cd ..; done
 
 # check out head on each submodule
 checkout-head: $(NSLIB_TARG) $(NETSURF_TARG) $(NSGENBIND_TARG) $(NSLIB_FB_TARG) $(NSLIB_SVGTINY_TARG) $(NSLIB_RO_TARG)
 	git submodule init
 	git submodule update
-	git pull --recurse-submodules
+	git fetch --recurse-submodules
 	for x in $^; do cd $$x; git checkout origin/HEAD ; cd ..; done
 
 # Generate a dist tarball from the head of all submodules
