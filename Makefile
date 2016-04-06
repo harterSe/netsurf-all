@@ -70,11 +70,10 @@ else
     ifeq ($(TARGET),amiga)
       NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG)
       NSBUILD_TARG := $(NSGENBIND_TARG)
-      NETSURF_CONFIG := NETSURF_USE_MOZJS=YES
     else
       ifeq ($(TARGET),cocoa)
         NSLIB_TARG := $(NSLIB_ALL_TARG) $(NSLIB_SVGTINY_TARG) 
-	export CFLAGS := -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -Wno-error
+        NSBUILD_TARG := $(NSGENBIND_TARG)
       else
         ifeq ($(TARGET),atari)
           NSLIB_TARG := $(NSLIB_ALL_TARG)
