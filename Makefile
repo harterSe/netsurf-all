@@ -40,12 +40,12 @@ NSLIB_RO_TARG := librufl libpencil
 # Build Environment
 export TARGET ?= gtk
 TMP_PREFIX := $(CURDIR)/inst-$(TARGET)
-export PKG_CONFIG_PATH = $(TMP_PREFIX)/lib/pkgconfig
+export PKG_CONFIG_PATH := $(TMP_PREFIX)/lib/pkgconfig:$(PKG_CONFIG_PATH)
 export PATH := $(PATH):$(TMP_PREFIX)/bin/
 TMP_NSSHARED := $(CURDIR)/buildsystem
 
 # The system actually doing the build
-BUILD ?= $(shell cc -dumpmachine)
+BUILD ?= $(shell $(CC) -dumpmachine)
 # The host we are targetting
 HOST ?= $(BUILD)
 
