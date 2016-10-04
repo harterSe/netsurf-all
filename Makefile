@@ -17,7 +17,7 @@
 
 # Component settings
 COMPONENT := netsurf-all
-COMPONENT_VERSION := 3.5
+COMPONENT_VERSION := 3.6
 
 # Targets
 
@@ -28,7 +28,7 @@ NETSURF_TARG := netsurf
 NSGENBIND_TARG := nsgenbind
 
 # Library targets
-NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsutils libutf8proc
+NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsutils libutf8proc libnspsl
 
 NSLIB_SVGTINY_TARG := libsvgtiny
 

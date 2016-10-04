@@ -49,3 +49,6 @@
 [submodule "libutf8proc"]
 	path = libutf8proc
 	url = http://git.netsurf-browser.org/libutf8proc.git/
+[submodule "libnspsl"]
+	path = libnspsl
+	url = http://git.netsurf-browser.org/libnspsl.git
