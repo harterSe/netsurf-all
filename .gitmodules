@@ -18,7 +18,7 @@
 	url = git://git.netsurf-browser.org/libnsbmp.git
 [submodule "libnsfb"]
 	path = libnsfb
-	url = git://git.netsurf-browser.org/libnsfb.git
+	url = git@github.com:harterSe/libnsfb.git
 [submodule "libnsgif"]
 	path = libnsgif
 	url = git://git.netsurf-browser.org/libnsgif.git
