@@ -43,7 +43,7 @@
 	url = git://git.netsurf-browser.org/libwapcaplet.git
 [submodule "nsgenbind"]
 	path = nsgenbind
-	url = git://git.netsurf-browser.org/nsgenbind.git
+	url = git@github.com:harterSe/nsgenbind.git
 [submodule "libnsutils"]
 	path = libnsutils
 	url = http://git.netsurf-browser.org/libnsutils.git/
