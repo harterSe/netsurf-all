@@ -1,6 +1,6 @@
 [submodule "netsurf"]
 	path = netsurf
-	url = git://git.netsurf-browser.org/netsurf.git
+	url = git@github.com:harterSe/netsurf.git
 [submodule "buildsystem"]
 	path = buildsystem
 	url = git://git.netsurf-browser.org/buildsystem.git
