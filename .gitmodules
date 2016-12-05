@@ -10,6 +10,7 @@
 [submodule "libdom"]
 	path = libdom
 	url = git@github.com:harterSe/libdom.git
+        branch = dom-event-charCode-hack
 [submodule "libhubbub"]
 	path = libhubbub
 	url = git://git.netsurf-browser.org/libhubbub.git
