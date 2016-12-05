@@ -9,7 +9,7 @@
 	url = git://git.netsurf-browser.org/libcss.git
 [submodule "libdom"]
 	path = libdom
-	url = git://git.netsurf-browser.org/libdom.git
+	url = git@github.com:harterSe/libdom.git
 [submodule "libhubbub"]
 	path = libhubbub
 	url = git://git.netsurf-browser.org/libhubbub.git
