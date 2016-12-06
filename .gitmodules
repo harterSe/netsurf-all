@@ -23,7 +23,7 @@
 	url = git@github.com:harterSe/libnsfb.git
 [submodule "libnsgif"]
 	path = libnsgif
-	url = https://github.com/harterSe/libnsfb.git
+	url = git://git.netsurf-browser.org/libnsgif.git
 [submodule "libparserutils"]
 	path = libparserutils
 	url = git://git.netsurf-browser.org/libparserutils.git
