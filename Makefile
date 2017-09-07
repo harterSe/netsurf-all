@@ -103,7 +103,7 @@ endef
 
 # prefixed install macro for each sub target
 define do_prefix_install
-	$(MAKE) install --directory=$1 HOST=$(HOST) PREFIX=$(TMP_PREFIX) Q=$(Q) DESTDIR=
+	$(MAKE) install --directory=$1 HOST=$(HOST) PREFIX=$(TMP_PREFIX) Q=$(Q) WARNFLAGS='-Wall -W -Wno-error' DESTDIR=
 
 endef
 
