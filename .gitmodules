@@ -1,7 +1,6 @@
 [submodule "netsurf"]
 	path = netsurf
 	url = https://github.com/harterSe/netsurf.git
-	branch = dom-event-charCode-hack
 [submodule "buildsystem"]
 	path = buildsystem
 	url = git://git.netsurf-browser.org/buildsystem.git
@@ -11,7 +10,6 @@
 [submodule "libdom"]
 	path = libdom
 	url = https://github.com/harterSe/libdom.git
-	branch = dom-event-charCode-hack
 [submodule "libhubbub"]
 	path = libhubbub
 	url = git://git.netsurf-browser.org/libhubbub.git
@@ -45,13 +43,15 @@
 [submodule "nsgenbind"]
 	path = nsgenbind
 	url = https://github.com/harterSe/nsgenbind.git
-	branch = generate-more-onxxx-event-listener
 [submodule "libnsutils"]
 	path = libnsutils
-	url = http://git.netsurf-browser.org/libnsutils.git/
+	url = git://git.netsurf-browser.org/libnsutils.git/
 [submodule "libutf8proc"]
 	path = libutf8proc
-	url = http://git.netsurf-browser.org/libutf8proc.git/
+	url = git://git.netsurf-browser.org/libutf8proc.git/
 [submodule "libnspsl"]
 	path = libnspsl
-	url = http://git.netsurf-browser.org/libnspsl.git
+	url = git://git.netsurf-browser.org/libnspsl.git
+[submodule "libnslog"]
+	path = libnslog
+	url = git://git.netsurf-browser.org/libnslog.git

@@ -17,7 +17,7 @@
 
 # Component settings
 COMPONENT := netsurf-all
-COMPONENT_VERSION := 3.6
+COMPONENT_VERSION := 3.8
 
 # Targets
 
@@ -28,7 +28,7 @@ NETSURF_TARG := netsurf
 NSGENBIND_TARG := nsgenbind
 
 # Library targets
-NSLIB_ALL_TARG := buildsystem libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsutils libutf8proc libnspsl
+NSLIB_ALL_TARG := buildsystem libnslog libwapcaplet libparserutils libcss libhubbub libdom libnsbmp libnsgif librosprite libnsutils libutf8proc libnspsl
 
 NSLIB_SVGTINY_TARG := libsvgtiny
 
@@ -103,7 +103,7 @@ endef
 
 # prefixed install macro for each sub target
 define do_prefix_install
-	$(MAKE) install --directory=$1 HOST=$(HOST) PREFIX=$(TMP_PREFIX) Q=$(Q) DESTDIR=
+	$(MAKE) install --directory=$1 HOST=$(HOST) PREFIX=$(TMP_PREFIX) Q=$(Q) WARNFLAGS='-Wall -W -Wno-error' DESTDIR=
 
 endef
 
